@@ -3,3 +3,4 @@ project/db-data
 front-end/cmd/.DS_Store
 front-end/.DS_Store
 broker-service/brokerApp
+authentication-service/authApp

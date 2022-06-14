@@ -4,7 +4,7 @@ import (
 	"log"
 )
 
-const webPort = "0.0.0.0:80"
+const webPort = ":80"
 
 func main() {
 	log.Printf("Starting broker service on port %s\n", webPort)
