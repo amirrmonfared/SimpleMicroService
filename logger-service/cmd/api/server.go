@@ -1,23 +1,21 @@
 package main
 
 import (
-	db "github.com/amirrmonfared/testMicroServices/authentication-service/db/sqlc"
+	"github.com/amirrmonfared/testMicroServices/logger-service/data"
 	"github.com/gin-gonic/gin"
 )
 
 //Server serves HTTP requests for our scraper service.
 type Server struct {
 	router *gin.Engine
-	store  db.Store
+	models data.Models
 }
 
-func NewServer(store db.Store) (*Server, error) {
-	server := &Server{
-		store: store,
-	}
+func NewServer() (*Server, error) {
+	server := &Server{}
 	router := gin.Default()
 
-	router.POST("/authenticate", server.Authenticate)
+	router.POST("/log", server.WriteLog)
 
 	server.router = router
 	return server, nil
