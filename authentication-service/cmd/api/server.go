@@ -1,14 +1,20 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	db "github.com/amirrmonfared/testMicroServices/authentication-service/db/sqlc"
+	"github.com/gin-gonic/gin"
+)
 
 //Server serves HTTP requests for our scraper service.
 type Server struct {
 	router *gin.Engine
+	store  db.Store
 }
 
-func NewServer() (*Server, error) {
-	server := &Server{}
+func NewServer(store db.Store) (*Server, error) {
+	server := &Server{
+		store: store,
+	}
 	router := gin.Default()
 
 	// router.POST("/", server.Broker)

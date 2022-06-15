@@ -1,52 +1,44 @@
-package main
+package db
 
 import (
 	"database/sql"
 	"log"
 	"os"
+	"testing"
 	"time"
 
-	db "github.com/amirrmonfared/testMicroServices/authentication-service/db/sqlc"
 	_ "github.com/lib/pq"
 )
 
-const webPort = ":80"
-
+var testQueries *Queries
+var testDB *sql.DB
 var counts int64
 
-func main() {
+func TestMain(m *testing.M) {
 	log.Println("starting authentication service")
 
-	//connect to DB
 	conn := connectToDB()
 	if conn == nil {
 		log.Panic("Can't connect to Postgres!")
 	}
 
-	store := db.NewStore(conn)
-	server, err := NewServer(store)
-	if err != nil {
-		log.Println("cannot connect to server", err)
-	}
+	testQueries = New(testDB)
 
-	err = server.Start(webPort)
-	if err != nil {
-		log.Fatal("cannot start server:", err)
-	}
+	os.Exit(m.Run())
 }
 
 func openDB(dsn string) (*sql.DB, error) {
-	conn, err := sql.Open("postgres", dsn)
+	testDB, err := sql.Open("postgres", dsn)
 	if err != nil {
 		return nil, err
 	}
 
-	err = conn.Ping()
+	err = testDB.Ping()
 	if err != nil {
 		return nil, err
 	}
 
-	return conn, nil
+	return testDB, nil
 }
 
 func connectToDB() *sql.DB {

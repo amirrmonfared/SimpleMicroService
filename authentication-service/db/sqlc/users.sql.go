@@ -7,7 +7,60 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
+
+const createUser = `-- name: CreateUser :one
+INSERT INTO users (
+  email,
+  first_name,
+  last_name,
+  password,
+  user_active
+) VALUES (
+  $1, $2, $3, $4, $5
+) RETURNING id, email, first_name, last_name, password, user_active, created_at, updated_at
+`
+
+type CreateUserParams struct {
+	Email      string        `json:"email"`
+	FirstName  string        `json:"first_name"`
+	LastName   string        `json:"last_name"`
+	Password   string        `json:"password"`
+	UserActive sql.NullInt64 `json:"user_active"`
+}
+
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, createUser,
+		arg.Email,
+		arg.FirstName,
+		arg.LastName,
+		arg.Password,
+		arg.UserActive,
+	)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.FirstName,
+		&i.LastName,
+		&i.Password,
+		&i.UserActive,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const deleteUser = `-- name: DeleteUser :exec
+DELETE FROM users
+WHERE id = $1
+`
+
+func (q *Queries) DeleteUser(ctx context.Context, id int64) error {
+	_, err := q.db.ExecContext(ctx, deleteUser, id)
+	return err
+}
 
 const getAll = `-- name: GetAll :many
 SELECT id, email, first_name, last_name, password, user_active, created_at, updated_at FROM users
@@ -44,4 +97,117 @@ func (q *Queries) GetAll(ctx context.Context) ([]User, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const getByEmail = `-- name: GetByEmail :one
+SELECT id, email, first_name, last_name, password, user_active, created_at, updated_at FROM users
+WHERE email = $1 LIMIT 1
+`
+
+func (q *Queries) GetByEmail(ctx context.Context, email string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getByEmail, email)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.FirstName,
+		&i.LastName,
+		&i.Password,
+		&i.UserActive,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getUser = `-- name: GetUser :one
+SELECT id, email, first_name, last_name, password, user_active, created_at, updated_at FROM users
+WHERE id = $1 LIMIT 1
+`
+
+func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUser, id)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.FirstName,
+		&i.LastName,
+		&i.Password,
+		&i.UserActive,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const resetPassword = `-- name: ResetPassword :one
+UPDATE users
+SET password = $1
+WHERE id = $2
+RETURNING id, email, first_name, last_name, password, user_active, created_at, updated_at
+`
+
+type ResetPasswordParams struct {
+	Password string `json:"password"`
+	ID       int64  `json:"id"`
+}
+
+func (q *Queries) ResetPassword(ctx context.Context, arg ResetPasswordParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, resetPassword, arg.Password, arg.ID)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.FirstName,
+		&i.LastName,
+		&i.Password,
+		&i.UserActive,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const updateUser = `-- name: UpdateUser :one
+UPDATE users
+SET email = $1,
+first_name = $2,
+last_name = $3,
+user_active = $4,
+updated_at = $5
+WHERE id = $6
+RETURNING id, email, first_name, last_name, password, user_active, created_at, updated_at
+`
+
+type UpdateUserParams struct {
+	Email      string        `json:"email"`
+	FirstName  string        `json:"first_name"`
+	LastName   string        `json:"last_name"`
+	UserActive sql.NullInt64 `json:"user_active"`
+	UpdatedAt  sql.NullTime  `json:"updated_at"`
+	ID         int64         `json:"id"`
+}
+
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, updateUser,
+		arg.Email,
+		arg.FirstName,
+		arg.LastName,
+		arg.UserActive,
+		arg.UpdatedAt,
+		arg.ID,
+	)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.FirstName,
+		&i.LastName,
+		&i.Password,
+		&i.UserActive,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }

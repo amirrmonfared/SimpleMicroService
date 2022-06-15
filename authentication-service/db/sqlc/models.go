@@ -9,12 +9,12 @@ import (
 )
 
 type User struct {
-	ID         int32          `json:"id"`
-	Email      sql.NullString `json:"email"`
-	FirstName  sql.NullString `json:"first_name"`
-	LastName   sql.NullString `json:"last_name"`
-	Password   sql.NullString `json:"password"`
-	UserActive sql.NullInt32  `json:"user_active"`
-	CreatedAt  sql.NullTime   `json:"created_at"`
-	UpdatedAt  sql.NullTime   `json:"updated_at"`
+	ID         int64         `json:"id"`
+	Email      string        `json:"email"`
+	FirstName  string        `json:"first_name"`
+	LastName   string        `json:"last_name"`
+	Password   string        `json:"password"`
+	UserActive sql.NullInt64 `json:"user_active"`
+	CreatedAt  sql.NullTime  `json:"created_at"`
+	UpdatedAt  sql.NullTime  `json:"updated_at"`
 }
