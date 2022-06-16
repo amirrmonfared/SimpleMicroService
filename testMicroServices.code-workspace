@@ -10,9 +10,6 @@
 			"path": "logger-service"
 		},
 		{
-			"path": "product-service"
-		},
-		{
 			"path": "project"
 		},
 		{

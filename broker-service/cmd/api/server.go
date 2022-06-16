@@ -13,7 +13,7 @@ func NewServer() (*Server, error) {
 
 	router.POST("/", server.Broker)
 	router.POST("/handle", server.HandleSubmission)
-
+	
 	server.router = router
 	return server, nil
 }
