@@ -1,8 +1,11 @@
 package main
 
 import (
+	"time"
+
 	"github.com/amirrmonfared/testMicroServices/logger-service/data"
 	"github.com/gin-gonic/gin"
+	cors "github.com/itsjamie/gin-cors"
 )
 
 //Server serves HTTP requests for our scraper service.
@@ -13,7 +16,17 @@ type Server struct {
 
 func NewServer() (*Server, error) {
 	server := &Server{}
-	router := gin.Default()
+	// Initialize a new Gin router
+	router := gin.New()
+
+	// Apply the middleware to the router (works with groups too)
+	router.Use(cors.Middleware(cors.Config{
+		Origins:        "*",
+		Methods:        "GET, PUT, POST, DELETE, OPTIONS",
+		RequestHeaders: "Accept, Authorization, Content-Type, X-CSRF-Token",
+		ExposedHeaders: "Link",
+		MaxAge:         50 * time.Second,
+	}))
 
 	router.POST("/log", server.WriteLog)
 

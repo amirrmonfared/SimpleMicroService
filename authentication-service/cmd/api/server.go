@@ -1,8 +1,11 @@
 package main
 
 import (
+	"time"
+
 	db "github.com/amirrmonfared/testMicroServices/authentication-service/db/sqlc"
 	"github.com/gin-gonic/gin"
+	cors "github.com/itsjamie/gin-cors"
 )
 
 //Server serves HTTP requests for our scraper service.
@@ -15,7 +18,17 @@ func NewServer(store db.Store) (*Server, error) {
 	server := &Server{
 		store: store,
 	}
-	router := gin.Default()
+	// Initialize a new Gin router
+	router := gin.New()
+
+	// Apply the middleware to the router (works with groups too)
+	router.Use(cors.Middleware(cors.Config{
+		Origins:         "*",
+		Methods:         "GET, PUT, POST, DELETE, OPTIONS",
+		RequestHeaders:  "Accept, Authorization, Content-Type, X-CSRF-Token",
+		ExposedHeaders:  "Link",
+		MaxAge:          50 * time.Second,
+	}))
 
 	router.POST("/authenticate", server.Authenticate)
 
