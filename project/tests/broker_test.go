@@ -53,7 +53,9 @@ func TestUserLogin(t *testing.T) {
 	jsonData, _ := json.MarshalIndent(payload, "", "\t")
 
 	resp, _ := http.Post("http://localhost:8080/handle", "", bytes.NewBuffer(jsonData))
-	if resp.StatusCode != http.StatusOK {
-		t.Fatalf("Expected status code %d. Got %d.", http.StatusOK, resp.StatusCode)
+	if resp.StatusCode != http.StatusAccepted {
+		t.Fatalf("Expected status code %d. Got %d.", http.StatusAccepted, resp.StatusCode)
 	}
+
+	
 }

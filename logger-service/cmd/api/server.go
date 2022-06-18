@@ -14,8 +14,10 @@ type Server struct {
 	models data.Models
 }
 
-func NewServer() (*Server, error) {
-	server := &Server{}
+func NewServer(models data.Models) (*Server, error) {
+	server := &Server{
+		models: models,
+	}
 	// Initialize a new Gin router
 	router := gin.New()
 

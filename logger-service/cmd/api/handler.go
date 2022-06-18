@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/amirrmonfared/testMicroServices/logger-service/data"
@@ -33,6 +34,7 @@ func (server *Server) WriteLog(ctx *gin.Context) {
 	}
 
 	err := server.models.LogEntry.Insert(event)
+	fmt.Println("hi")
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return

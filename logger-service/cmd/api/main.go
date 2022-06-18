@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/amirrmonfared/testMicroServices/logger-service/data"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -26,6 +27,7 @@ func main() {
 	}
 	client = mongoClient
 
+	models := data.New(client)
 	// create a context in order to disconnect
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
@@ -39,11 +41,8 @@ func main() {
 
 	log.Printf("Starting logger service on port %s\n", webPort)
 
-	// app := Server{
-	// 	models: data.New(client),
-	// }
 
-	server, err := NewServer()
+	server, err := NewServer(models)
 	if err != nil {
 		log.Println("cannot connect to server", err)
 	}

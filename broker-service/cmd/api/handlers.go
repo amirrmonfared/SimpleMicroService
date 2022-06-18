@@ -48,10 +48,8 @@ func (server *Server) HandleSubmission(ctx *gin.Context) {
 		return
 	}
 
-	var err error
 	var errPayload jsonResponse
 	errPayload.Error = true
-	errPayload.Message = err.Error()
 
 	switch requestPayload.Action {
 	case "auth":
