@@ -18,7 +18,7 @@ run commands inside project directory.
     ```bash
     make down
     ```
-  ### How to run tests
+### How to run tests
 - Start test:
 
     ```bash
