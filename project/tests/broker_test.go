@@ -3,6 +3,8 @@ package tests
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"testing"
 )
@@ -52,10 +54,22 @@ func TestUserLogin(t *testing.T) {
 
 	jsonData, _ := json.MarshalIndent(payload, "", "\t")
 
+	// check user login request accepted
 	resp, _ := http.Post("http://localhost:8080/handle", "", bytes.NewBuffer(jsonData))
 	if resp.StatusCode != http.StatusAccepted {
 		t.Fatalf("Expected status code %d. Got %d.", http.StatusAccepted, resp.StatusCode)
 	}
+	defer resp.Body.Close()
 
-	
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatal("cannot read resp", err)
+	}
+
+	var respones jsonResponse
+	json.Unmarshal(body, &respones)
+
+	fmt.Println(respones)
+	// check user login request logged into log database
+
 }

@@ -17,6 +17,8 @@ services:
     build:
       context: ./../logger-service
       dockerfile: ./../logger-service/logger-service.dockerfile
+    depends_on:
+      - mongo
     restart: always
     deploy:
       mode: replicated
@@ -26,6 +28,8 @@ services:
     build:
       context: ./../authentication-service
       dockerfile: ./../authentication-service/authentication-service.dockerfile
+    depends_on:
+      - postgres
     restart: always
     ports:
       - "8081:80"

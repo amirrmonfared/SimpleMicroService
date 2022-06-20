@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"log"
 	"os"
-	"time"
 
 	db "github.com/amirrmonfared/testMicroServices/authentication-service/db/sqlc"
 	_ "github.com/lib/pq"
@@ -35,40 +34,18 @@ func main() {
 	}
 }
 
-func openDB(dsn string) (*sql.DB, error) {
+func connectToDB() *sql.DB {
+	dsn := os.Getenv("DSN")
+
 	conn, err := sql.Open("postgres", dsn)
 	if err != nil {
-		return nil, err
+		return nil
 	}
 
 	err = conn.Ping()
 	if err != nil {
-		return nil, err
+		return nil
 	}
 
-	return conn, nil
-}
-
-func connectToDB() *sql.DB {
-	dsn := os.Getenv("DSN")
-
-	for {
-		connection, err := openDB(dsn)
-		if err != nil {
-			log.Println("Postgres not yet ready ...")
-			counts++
-		} else {
-			log.Println("connected to Postgres")
-			return connection
-		}
-
-		if counts > 10 {
-			log.Println(err)
-			return nil
-		}
-
-		log.Println("Backing off for two seconds....")
-		time.Sleep(2 * time.Second)
-		continue
-	}
+	return conn
 }

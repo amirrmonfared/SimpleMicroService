@@ -33,10 +33,10 @@ type LogEntry struct {
 	UpdatedAt time.Time `bson:"updated_at" json:"updated_at"`
 }
 
-func (l *LogEntry) Insert(entry LogEntry) error {
+func (l *LogEntry) Insert(entry LogEntry) (interface{}, error) {
 	collection := client.Database("logs").Collection("logs")
 
-	_, err := collection.InsertOne(context.TODO(), LogEntry{
+	h, err := collection.InsertOne(context.TODO(), LogEntry{
 		Name:      entry.Name,
 		Data:      entry.Data,
 		CreatedAt: time.Now(),
@@ -44,10 +44,12 @@ func (l *LogEntry) Insert(entry LogEntry) error {
 	})
 	if err != nil {
 		log.Println("Error inserting into logs:", err)
-		return err
+		return "", err
 	}
 
-	return nil
+	id := h.InsertedID
+
+	return id, nil
 }
 
 func (l *LogEntry) All() ([]*LogEntry, error) {

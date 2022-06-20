@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 
 	db "github.com/amirrmonfared/testMicroServices/authentication-service/db/sqlc"
@@ -17,6 +18,7 @@ type jsonResponse struct {
 	Error   bool   `json:"error"`
 	Message string `json:"message"`
 	Data    any    `json:"data,omitempty"`
+	LogID   any    `json:"log_id,omitempty"`
 }
 
 func (server *Server) Authenticate(ctx *gin.Context) {
@@ -47,22 +49,25 @@ func (server *Server) Authenticate(ctx *gin.Context) {
 		return
 	}
 
-	err = server.logRequest("authentication", fmt.Sprintf("%s logged in", user.Email))
+	resp, err := server.logRequest("authentication", fmt.Sprintf("%s logged in", user.Email))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
+	resp = "hi"
+
 	payload := jsonResponse{
 		Error:   false,
 		Message: fmt.Sprintf("Logged in user %s", user.Email),
 		Data:    user,
+		LogID:   resp,
 	}
 
 	ctx.JSON(http.StatusAccepted, payload)
 }
 
-func (server *Server) logRequest(name, data string) error {
+func (server *Server) logRequest(name, data string) (any, error) {
 	var entry struct {
 		Name string `json:"name"`
 		Data string `json:"data"`
@@ -76,16 +81,28 @@ func (server *Server) logRequest(name, data string) error {
 
 	request, err := http.NewRequest("POST", logServiceURL, bytes.NewBuffer(jsonData))
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	client := &http.Client{}
-	_, err = client.Do(request)
+	resp, err := client.Do(request)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	var respones jsonResponse
+	json.Unmarshal(body, &respones)
+
+	id := respones.Data
+
+	return id, nil
 }
 
 // PasswordMatches uses Go's bcrypt package to compare a user supplied password
