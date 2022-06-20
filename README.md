@@ -6,7 +6,8 @@ In this project, I gonna build some microservices to test them with integration 
 ### Setup infrastructure
 run commands inside project directory.
 
-- Start build containers:
+### How to run microservices
+- Start containers:
 
     ```bash
     make up_build
@@ -17,8 +18,20 @@ run commands inside project directory.
     ```bash
     make down
     ```
+  ### How to run tests
+- Start test:
 
-### How to run
+    ```bash
+    make test
+    ```
+    
+  - Stop containers:
+
+    ```bash
+    make down
+    ```
+
+### How to run frontend service 
 
 - Run Front-end:
 
