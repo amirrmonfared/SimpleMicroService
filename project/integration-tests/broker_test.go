@@ -29,6 +29,7 @@ type jsonResponse struct {
 	Error   bool   `json:"error"`
 	Message string `json:"message"`
 	Data    any    `json:"data,omitempty"`
+	Log_ID  any    `json:"log_id,omitempty"`
 }
 
 func TestBroker(t *testing.T) {
@@ -61,6 +62,8 @@ func TestUserLogin(t *testing.T) {
 	}
 	defer resp.Body.Close()
 
+	fmt.Println("hi1")
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatal("cannot read resp", err)
@@ -69,7 +72,27 @@ func TestUserLogin(t *testing.T) {
 	var respones jsonResponse
 	json.Unmarshal(body, &respones)
 
-	fmt.Println(respones)
 	// check user login request logged into log database
+	logID := respones.Log_ID
 
+	jsonDataForLog, _ := json.MarshalIndent(logID, "", "\t")
+
+	respLog, _ := http.Post("http://logger-service/get-log", "", bytes.NewBuffer(jsonDataForLog))
+	if respLog.StatusCode != http.StatusAccepted {
+		t.Fatalf("Expected status code %d. Got %d.", http.StatusAccepted, respLog.StatusCode)
+	}
+
+	fmt.Println("hi2")
+
+	defer resp.Body.Close()
+
+	bodyLog, err := ioutil.ReadAll(respLog.Body)
+	if err != nil {
+		t.Fatal("cannot read resp", err)
+	}
+
+	var responeslog jsonResponse
+	json.Unmarshal(bodyLog, &responeslog)
+
+	fmt.Println(resp)
 }

@@ -29,6 +29,7 @@ type jsonResponse struct {
 	Error   bool   `json:"error"`
 	Message string `json:"message"`
 	Data    any    `json:"data,omitempty"`
+	LogID   any    `json:"log_id,omitempty"`
 }
 
 func (server *Server) Broker(ctx *gin.Context) {
@@ -109,6 +110,7 @@ func (server *Server) authenticate(ctx *gin.Context, a AuthPayload) {
 	payload.Error = false
 	payload.Message = "Authenticated!"
 	payload.Data = jsonFromService.Data
+	payload.LogID = jsonFromService.LogID
 
 	ctx.JSON(http.StatusAccepted, payload)
 }
@@ -140,9 +142,21 @@ func (server *Server) logItem(ctx *gin.Context, entry LogPayload) {
 		return
 	}
 
+	// create a variable we'll read response.Body into
+	var jsonFromService jsonResponse
+
+	// decode the json from the auth service
+	err = json.NewDecoder(response.Body).Decode(&jsonFromService)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, err)
+		return
+	}
+
 	var payload jsonResponse
 	payload.Error = false
 	payload.Message = "logged"
+	payload.LogID = jsonFromService.LogID
+
 
 	ctx.JSON(http.StatusAccepted, payload)
 }

@@ -61,7 +61,9 @@ stop:
 	@echo "Stopped front end!"
 
 test:
+	@echo Starting Test...
 	docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit
 	docker-compose -f docker-compose.test.yml down --volumes
+	@echo Done!
 
 .PHONY: up up_build down build_broker build_front start stop build_logger

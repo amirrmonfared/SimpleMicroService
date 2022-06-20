@@ -31,6 +31,7 @@ func NewServer(models data.Models) (*Server, error) {
 	}))
 
 	router.POST("/log", server.WriteLog)
+	router.POST("/get-log", server.GetLog)
 
 	server.router = router
 	return server, nil
