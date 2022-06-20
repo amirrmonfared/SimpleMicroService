@@ -24,12 +24,6 @@ run commands inside project directory.
     ```bash
     make test
     ```
-    
-  - Stop containers:
-
-    ```bash
-    make down
-    ```
 
 ### How to run frontend service 
 
