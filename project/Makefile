@@ -60,4 +60,8 @@ stop:
 	@taskkill /IM "${FRONT_END_BINARY}" /F
 	@echo "Stopped front end!"
 
+test:
+	docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit
+	docker-compose -f docker-compose.test.yml down --volumes
+
 .PHONY: up up_build down build_broker build_front start stop build_logger

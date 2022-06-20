@@ -1,0 +1,9 @@
+FROM golang:1.18-alpine
+
+RUN set -ex; \
+    apk update; \
+    apk add --no-cache git
+
+WORKDIR /go/src/github.com/amirrmonfared/testMicroServices/project/
+
+CMD CGO_ENABLED=0 go test ./... -v
