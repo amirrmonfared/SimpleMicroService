@@ -26,5 +26,8 @@ jobs:
     - name: change directory
       run: cd project
 
+    - name: run application
+      run: make up_build
+
     - name: Test
       run: make test
