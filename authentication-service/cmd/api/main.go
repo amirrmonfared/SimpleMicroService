@@ -11,16 +11,17 @@ import (
 
 const webPort = ":80"
 
-var counts int64
-
 func main() {
 	log.Println("starting authentication service")
+	log.Println("--------------------------------")
 
-	//connect to DB
-	conn := connectToDB()
-	if conn == nil {
-		log.Panic("Can't connect to Postgres!")
+	dsn := os.Getenv("DSN")
+	conn, err := sql.Open("postgres", dsn)
+	if err != nil {
+		log.Panic("cannot connect to database")
 	}
+	log.Println("connected to database")
+	log.Println("--------------------------------")
 
 	store := db.NewStore(conn)
 	server, err := NewServer(store)
@@ -32,20 +33,4 @@ func main() {
 	if err != nil {
 		log.Fatal("cannot start server:", err)
 	}
-}
-
-func connectToDB() *sql.DB {
-	dsn := os.Getenv("DSN")
-
-	conn, err := sql.Open("postgres", dsn)
-	if err != nil {
-		return nil
-	}
-
-	err = conn.Ping()
-	if err != nil {
-		return nil
-	}
-
-	return conn
 }
