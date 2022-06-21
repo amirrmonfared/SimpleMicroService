@@ -35,7 +35,7 @@ type jsonResponse struct {
 func TestBroker(t *testing.T) {
 	jsonData, _ := json.MarshalIndent("empty post request", "", "\t")
 
-	resp, _ := http.Post("http://broker-service", "", bytes.NewBuffer(jsonData))
+	resp, _ := http.Post("http://broker-service/", "", bytes.NewBuffer(jsonData))
 	if resp.StatusCode != http.StatusOK {
 		t.Fatalf("Expected status code %d. Got %d.", http.StatusOK, resp.StatusCode)
 	}
@@ -43,6 +43,7 @@ func TestBroker(t *testing.T) {
 
 func TestUserLogin(t *testing.T) {
 
+	// check user login request accepted
 	authPayload := AuthPayload{
 		Email:    "admin@example.com",
 		Password: "verysecret",
@@ -55,34 +56,36 @@ func TestUserLogin(t *testing.T) {
 
 	jsonData, _ := json.MarshalIndent(payload, "", "\t")
 
-	// check user login request accepted
 	resp, _ := http.Post("http://broker-service/handle", "", bytes.NewBuffer(jsonData))
 	if resp.StatusCode != http.StatusAccepted {
 		t.Fatalf("Expected status code %d. Got %d.", http.StatusAccepted, resp.StatusCode)
 	}
 	defer resp.Body.Close()
 
-	fmt.Println("hi1")
-
+	// check user login request logged into log database
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatal("cannot read resp", err)
 	}
 
-	var respones jsonResponse
-	json.Unmarshal(body, &respones)
+	var response jsonResponse
+	json.Unmarshal(body, &response)
 
-	// check user login request logged into log database
-	logID := respones.Log_ID
+	logPayload := LogPayload{
+		Data: fmt.Sprintf("%v", response.Log_ID),
+	}
 
-	jsonDataForLog, _ := json.MarshalIndent(logID, "", "\t")
+	payload = RequestPayload{
+		Action: "getlog",
+		Log:    logPayload,
+	}
 
-	respLog, _ := http.Post("http://logger-service/get-log", "", bytes.NewBuffer(jsonDataForLog))
+	jsonDataForLog, _ := json.MarshalIndent(payload, "", "\t")
+
+	respLog, _ := http.Post("http://broker-service/handle", "", bytes.NewBuffer(jsonDataForLog))
 	if respLog.StatusCode != http.StatusAccepted {
 		t.Fatalf("Expected status code %d. Got %d.", http.StatusAccepted, respLog.StatusCode)
 	}
-
-	fmt.Println("hi2")
 
 	defer resp.Body.Close()
 
@@ -91,8 +94,11 @@ func TestUserLogin(t *testing.T) {
 		t.Fatal("cannot read resp", err)
 	}
 
-	var responeslog jsonResponse
-	json.Unmarshal(bodyLog, &responeslog)
+	var responseLog jsonResponse
+	json.Unmarshal(bodyLog, &responseLog)
 
-	fmt.Println(resp)
+	if responseLog.Log_ID != logPayload.Data {
+		t.Fatalf("Expected log ID %s. Got %s.", logPayload.Data, responseLog.Log_ID)
+	}
+
 }

@@ -8,7 +8,7 @@ MAIL_BINARY=mailerApp
 ## up: starts all containers in the background without forcing build
 up:
 	@echo Starting Docker images...
-	docker compose up -d
+	docker compose -f docker-compose.yml up -d
 	@echo Docker images started!
 
 ## up_build: stops docker-compose (if running), builds all projects and starts docker compose

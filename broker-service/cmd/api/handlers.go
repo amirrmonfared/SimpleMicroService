@@ -57,6 +57,8 @@ func (server *Server) HandleSubmission(ctx *gin.Context) {
 		server.authenticate(ctx, requestPayload.Auth)
 	case "log":
 		server.logItem(ctx, requestPayload.Log)
+	case "getlog":
+		server.getLog(ctx, requestPayload.Log)
 	default:
 		ctx.JSON(http.StatusBadRequest, errPayload)
 	}
@@ -157,6 +159,50 @@ func (server *Server) logItem(ctx *gin.Context, entry LogPayload) {
 	payload.Message = "logged"
 	payload.LogID = jsonFromService.LogID
 
+	ctx.JSON(http.StatusAccepted, payload)
+}
+
+func (server *Server) getLog(ctx *gin.Context, entry LogPayload) {
+	jsonData, _ := json.MarshalIndent(entry, "", "\t")
+
+	logServiceURL := "http://logger-service/get-log"
+
+	request, err := http.NewRequest("POST", logServiceURL, bytes.NewBuffer(jsonData))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, err)
+		return
+	}
+
+	request.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+
+	response, err := client.Do(request)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, err)
+		return
+	}
+
+	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusAccepted {
+		ctx.JSON(http.StatusBadRequest, err)
+		return
+	}
+
+	// create a variable we'll read response.Body into
+	var jsonFromService jsonResponse
+
+	// decode the json from the auth service
+	err = json.NewDecoder(response.Body).Decode(&jsonFromService)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, err)
+		return
+	}
+
+	var payload jsonResponse
+	payload.Error = false
+	payload.LogID = jsonFromService.LogID
 
 	ctx.JSON(http.StatusAccepted, payload)
 }

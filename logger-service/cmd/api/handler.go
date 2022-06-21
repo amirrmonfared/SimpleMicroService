@@ -61,8 +61,8 @@ func (server *Server) GetLog(ctx *gin.Context) {
 		ID: requestPayload.Data,
 	}
 
-	id := fmt.Sprintf("%v", data)
-
+	id := fmt.Sprintf("%v", data.ID)
+	
 	message, err := server.models.LogEntry.GetOne(id)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
@@ -72,8 +72,8 @@ func (server *Server) GetLog(ctx *gin.Context) {
 	resp := jsonResponse{
 		Error:   false,
 		Message: "logged",
-		Data:    message,
-		Log_ID:  id,
+		Data:    "message.Data",
+		Log_ID:  message.ID,
 	}
 
 	ctx.JSON(http.StatusAccepted, resp)
