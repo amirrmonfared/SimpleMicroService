@@ -12,35 +12,34 @@ import (
 
 const (
 	webPort  = ":80"
-	rpcPort  = "5001"
 	mongoURL = "mongodb://mongo:27017"
-	gRpcPort = "50001"
 )
 
 var client *mongo.Client
 
 func main() {
-	// connect to mongo
+
+	log.Println("starting logger service")
+	log.Println("--------------------------------")
 	mongoClient, err := connectToMongo()
 	if err != nil {
 		log.Panic(err)
 	}
-	client = mongoClient
+	log.Println("connected to database")
+	log.Println("--------------------------------")
 
+	client = mongoClient
 	models := data.New(client)
+
 	// create a context in order to disconnect
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	// close connection
 	defer func() {
 		if err = client.Disconnect(ctx); err != nil {
 			panic(err)
 		}
 	}()
-
-	log.Printf("Starting logger service on port %s\n", webPort)
-
 
 	server, err := NewServer(models)
 	if err != nil {
