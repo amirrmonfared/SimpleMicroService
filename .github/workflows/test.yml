@@ -23,11 +23,13 @@ jobs:
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
 
-    - name: change directory
-      run: cd project
 
     - name: run application
-      run: make up_build
+      run: |
+      cd project
+      make up_build
 
     - name: Test
-      run: make test
+      run: |
+      cd project
+      make test
