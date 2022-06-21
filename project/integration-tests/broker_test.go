@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"testing"
 )
@@ -32,7 +33,7 @@ type jsonResponse struct {
 	Log_ID  any    `json:"log_id,omitempty"`
 }
 
-func TestBroker(t *testing.T) {
+func TestBrokerIsWork(t *testing.T) {
 	jsonData, _ := json.MarshalIndent("empty post request", "", "\t")
 
 	resp, _ := http.Post("http://broker-service/", "", bytes.NewBuffer(jsonData))
@@ -43,7 +44,21 @@ func TestBroker(t *testing.T) {
 
 func TestUserLogin(t *testing.T) {
 
-	// check user login request accepted
+	resp := userLogin()
+	if resp.StatusCode != http.StatusAccepted {
+		t.Fatalf("Expected status code %d. Got %d.", http.StatusAccepted, resp.StatusCode)
+	}
+	defer resp.Body.Close()
+
+	respLog := getLog(resp, t)
+	if respLog.StatusCode != http.StatusAccepted {
+		t.Fatalf("Expected status code %d. Got %d.", http.StatusAccepted, resp.StatusCode)
+	}
+	defer respLog.Body.Close()
+
+}
+
+func userLogin() *http.Response {
 	authPayload := AuthPayload{
 		Email:    "admin@example.com",
 		Password: "verysecret",
@@ -56,16 +71,20 @@ func TestUserLogin(t *testing.T) {
 
 	jsonData, _ := json.MarshalIndent(payload, "", "\t")
 
-	resp, _ := http.Post("http://broker-service/handle", "", bytes.NewBuffer(jsonData))
-	if resp.StatusCode != http.StatusAccepted {
-		t.Fatalf("Expected status code %d. Got %d.", http.StatusAccepted, resp.StatusCode)
+	resp, err := http.Post("http://broker-service/handle", "", bytes.NewBuffer(jsonData))
+	if err != nil {
+		return nil
 	}
-	defer resp.Body.Close()
 
-	// check user login request logged into log database
+	return resp
+}
+
+func getLog(resp *http.Response, t *testing.T) *http.Response {
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		t.Fatal("cannot read resp", err)
+		log.Fatal("cannot read body")
+		return nil
 	}
 
 	var response jsonResponse
@@ -75,7 +94,7 @@ func TestUserLogin(t *testing.T) {
 		Data: fmt.Sprintf("%v", response.Log_ID),
 	}
 
-	payload = RequestPayload{
+	payload := RequestPayload{
 		Action: "getlog",
 		Log:    logPayload,
 	}
@@ -83,22 +102,18 @@ func TestUserLogin(t *testing.T) {
 	jsonDataForLog, _ := json.MarshalIndent(payload, "", "\t")
 
 	respLog, _ := http.Post("http://broker-service/handle", "", bytes.NewBuffer(jsonDataForLog))
-	if respLog.StatusCode != http.StatusAccepted {
-		t.Fatalf("Expected status code %d. Got %d.", http.StatusAccepted, respLog.StatusCode)
-	}
-
-	defer resp.Body.Close()
 
 	bodyLog, err := ioutil.ReadAll(respLog.Body)
 	if err != nil {
 		t.Fatal("cannot read resp", err)
 	}
 
-	var responseLog jsonResponse
-	json.Unmarshal(bodyLog, &responseLog)
+	var respLogger jsonResponse
+	json.Unmarshal(bodyLog, &respLogger)
 
-	if responseLog.Log_ID != logPayload.Data {
-		t.Fatalf("Expected log ID %s. Got %s.", logPayload.Data, responseLog.Log_ID)
+	if respLogger.Log_ID != logPayload.Data {
+		t.Fatalf("Expected log ID %s. Got %s.", logPayload.Data, respLogger.Log_ID)
 	}
 
+	return respLog
 }
