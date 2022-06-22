@@ -18,7 +18,7 @@ func NewServer(models data.Models) (*Server, error) {
 	server := &Server{
 		models: models,
 	}
-	
+
 	// Initialize a new Gin router
 	router := gin.New()
 

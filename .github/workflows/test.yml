@@ -25,7 +25,7 @@ jobs:
 
 
     - name: run application
-      run: chdir project && make up_build
+      run: chdir ./../project && make up_build
 
     - name: Test
-      run: chdir project && make test
+      run: chdir ./../project && make test

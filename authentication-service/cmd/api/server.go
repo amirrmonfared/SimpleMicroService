@@ -23,11 +23,11 @@ func NewServer(store db.Store) (*Server, error) {
 
 	// Apply the middleware to the router (works with groups too)
 	router.Use(cors.Middleware(cors.Config{
-		Origins:         "*",
-		Methods:         "GET, PUT, POST, DELETE, OPTIONS",
-		RequestHeaders:  "Accept, Authorization, Content-Type, X-CSRF-Token",
-		ExposedHeaders:  "Link",
-		MaxAge:          50 * time.Second,
+		Origins:        "*",
+		Methods:        "GET, PUT, POST, DELETE, OPTIONS",
+		RequestHeaders: "Accept, Authorization, Content-Type, X-CSRF-Token",
+		ExposedHeaders: "Link",
+		MaxAge:         50 * time.Second,
 	}))
 
 	router.POST("/authenticate", server.Authenticate)

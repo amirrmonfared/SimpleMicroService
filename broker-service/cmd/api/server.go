@@ -20,11 +20,11 @@ func NewServer() (*Server, error) {
 
 	// Apply the middleware to the router (works with groups too)
 	router.Use(cors.Middleware(cors.Config{
-		Origins:         "*",
-		Methods:         "GET, PUT, POST, DELETE",
-		RequestHeaders:  "Origin, Authorization, Content-Type",
-		ExposedHeaders:  "",
-		MaxAge:          50 * time.Second,
+		Origins:        "*",
+		Methods:        "GET, PUT, POST, DELETE",
+		RequestHeaders: "Origin, Authorization, Content-Type",
+		ExposedHeaders: "",
+		MaxAge:         50 * time.Second,
 	}))
 
 	router.POST("/", server.Broker)
