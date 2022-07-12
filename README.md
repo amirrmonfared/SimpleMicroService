@@ -1,7 +1,7 @@
-# testMicroServices
+# Simple Micro Services
 
 ## Overview
-In this project, I gonna build some microservices to test them with integration tests.
+In this project, I gonna build some microservices.
 
 ### Setup infrastructure
 run commands inside project directory.
