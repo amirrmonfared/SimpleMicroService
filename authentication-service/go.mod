@@ -1,4 +1,4 @@
-module github.com/amirrmonfared/testMicroServices/authentication-service
+module github.com/amirrmonfared/SimpleMicroService/authentication-service
 
 go 1.18
 

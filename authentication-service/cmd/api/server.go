@@ -3,7 +3,7 @@ package main
 import (
 	"time"
 
-	db "github.com/amirrmonfared/testMicroServices/authentication-service/db/sqlc"
+	db "github.com/amirrmonfared/SimpleMicroService/authentication-service/db/sqlc"
 	"github.com/gin-gonic/gin"
 	cors "github.com/itsjamie/gin-cors"
 )

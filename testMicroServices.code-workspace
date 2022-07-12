@@ -16,10 +16,10 @@
 			"path": "front-end"
 		},
 		{
-			"path": ".github"
+			"path": "mailer-service"
 		},
 		{
-			"path": "mailer-service"
+			"path": "listener-service"
 		}
 	]
 }

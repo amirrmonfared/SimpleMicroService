@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"net/http"
 
-	db "github.com/amirrmonfared/testMicroServices/authentication-service/db/sqlc"
+	db "github.com/amirrmonfared/SimpleMicroService/authentication-service/db/sqlc"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )

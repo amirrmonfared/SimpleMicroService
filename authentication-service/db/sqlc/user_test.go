@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/amirrmonfared/testMicroServices/authentication-service/util"
+	"github.com/amirrmonfared/SimpleMicroService/authentication-service/util"
 	"github.com/stretchr/testify/require"
 )
 

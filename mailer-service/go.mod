@@ -1,4 +1,4 @@
-module github.com/amirrmonfared/testMicroServices/mail-service
+module github.com/amirrmonfared/SimpleMicroService/mail-service
 
 go 1.18
 

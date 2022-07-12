@@ -1,3 +1,3 @@
-module github.com/amirrmonfared/testMicroServices/project
+module github.com/amirrmonfared/SimpleMicroService/project
 
 go 1.18

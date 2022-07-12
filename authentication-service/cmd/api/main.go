@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	db "github.com/amirrmonfared/testMicroServices/authentication-service/db/sqlc"
+	db "github.com/amirrmonfared/SimpleMicroService/authentication-service/db/sqlc"
 	_ "github.com/lib/pq"
 )
 

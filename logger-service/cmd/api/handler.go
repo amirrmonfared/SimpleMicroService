@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/amirrmonfared/testMicroServices/logger-service/data"
+	"github.com/amirrmonfared/SimpleMicroService/logger-service/data"
 	"github.com/gin-gonic/gin"
 )
 

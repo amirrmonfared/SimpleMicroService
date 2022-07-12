@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/amirrmonfared/testMicroServices/logger-service/data"
+	"github.com/amirrmonfared/SimpleMicroService/logger-service/data"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )

@@ -1,4 +1,4 @@
-module github.com/amirrmonfared/testMicroServices/broker-service
+module github.com/amirrmonfared/SimpleMicroService/broker-service
 
 go 1.18
 

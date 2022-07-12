@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  listd_tests:
+  integration_tests:
     build:
       context: .
       dockerfile: ./../project/Dockerfile.test

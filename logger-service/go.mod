@@ -1,4 +1,4 @@
-module github.com/amirrmonfared/testMicroServices/logger-service
+module github.com/amirrmonfared/SimpleMicroService/logger-service
 
 go 1.18
 
