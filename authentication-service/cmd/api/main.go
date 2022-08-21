@@ -9,7 +9,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-const webPort = ":80"
+const webPort = ":8080"
 
 func main() {
 	log.Println("starting authentication service")

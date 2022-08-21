@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/amirrmonfared/SimpleMicroService/broker-service/event"
 	"github.com/gin-gonic/gin"
 )
 
@@ -64,7 +65,7 @@ func (server *Server) HandleSubmission(ctx *gin.Context) {
 	case "auth":
 		server.authenticate(ctx, requestPayload.Auth)
 	case "log":
-		server.logItem(ctx, requestPayload.Log)
+		server.logEventViaRabbit(ctx, requestPayload.Log)
 	case "getlog":
 		server.getLog(ctx, requestPayload.Log)
 	case "mail":
@@ -252,4 +253,39 @@ func (server *Server) SendMail(ctx *gin.Context, msg MailPayload) {
 	payload.Message = "Message sent to " + msg.To
 
 	ctx.JSON(http.StatusAccepted, payload)
+}
+
+// logEventViaRabbit logs an event using the logger-service. It makes the call by pushing the data to RabbitMQ.
+func (server *Server) logEventViaRabbit(ctx *gin.Context, l LogPayload) {
+	err := server.pushToQueue(l.Name, l.Data)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, err)
+		return
+	}
+
+	var payload jsonResponse
+	payload.Error = false
+	payload.Message = "logged via RabbitMQ"
+
+	ctx.JSON(http.StatusAccepted, payload)
+}
+
+// pushToQueue pushes a message into RabbitMQ
+func (server *Server) pushToQueue(name, msg string) error {
+	emitter, err := event.NewEventEmitter(server.config.Rabbit)
+	if err != nil {
+		return err
+	}
+
+	payload := LogPayload{
+		Name: name,
+		Data: msg,
+	}
+
+	j, _ := json.MarshalIndent(&payload, "", "\t")
+	err = emitter.Push(string(j), "log.INFO")
+	if err != nil {
+		return err
+	}
+	return nil
 }
