@@ -43,6 +43,8 @@ services:
     build:
       context: ./../listener-service
       dockerfile: ./../listener-service/listener-service.dockerfile
+    depends_on:
+      - rabbitmq
     deploy:
       mode: replicated
       replicas: 1
@@ -58,6 +60,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
       POSTGRES_DB: users
+      PGDATA: data/postgres
     volumes:
       - ./db-data/postgres/:/var/lib/postgresql/data/
 

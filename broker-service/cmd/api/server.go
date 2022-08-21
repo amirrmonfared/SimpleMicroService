@@ -10,10 +10,13 @@ import (
 //Server serves HTTP requests for our scraper service.
 type Server struct {
 	router *gin.Engine
+	config Config
 }
 
-func NewServer() (*Server, error) {
-	server := &Server{}
+func NewServer(config Config) (*Server, error) {
+	server := &Server{
+		config: config,
+	}
 
 	// Initialize a new Gin router
 	router := gin.New()

@@ -1,3 +1,5 @@
+.vscode
+.gitignore
 front-end/frontApp.exe
 project/db-data
 front-end/cmd/.DS_Store
@@ -5,3 +7,5 @@ front-end/.DS_Store
 broker-service/brokerApp
 authentication-service/authApp
 logger-service/loggerServiceApp
+mailer-service/mailerApp
+listener-service/listenerApp

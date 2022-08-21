@@ -1,3 +1,3 @@
 module github.com/amirrmonfared/SimpleMicroService/project
 
-go 1.18
+go 1.17

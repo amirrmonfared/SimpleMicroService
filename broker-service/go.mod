@@ -1,8 +1,10 @@
 module github.com/amirrmonfared/SimpleMicroService/broker-service
 
-go 1.18
+go 1.17
 
 require github.com/gin-gonic/gin v1.8.1
+
+require github.com/rabbitmq/amqp091-go v1.4.0 // indirect
 
 require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
@@ -19,7 +21,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.1 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
 	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97 // indirect
-	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110 // indirect
+	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4 // indirect
 	golang.org/x/sys v0.0.0-20210806184541-e5e7981a1069 // indirect
 	golang.org/x/text v0.3.6 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect

@@ -29,8 +29,8 @@ type LogPayload struct {
 type jsonResponse struct {
 	Error   bool   `json:"error"`
 	Message string `json:"message"`
-	Data    any    `json:"data,omitempty"`
-	Log_ID  any    `json:"log_id,omitempty"`
+	Data    interface{}    `json:"data,omitempty"`
+	Log_ID  interface{}    `json:"log_id,omitempty"`
 }
 
 func TestBrokerIsWork(t *testing.T) {

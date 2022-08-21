@@ -14,10 +14,10 @@ import (
 )
 
 type jsonResponse struct {
-	Error   bool   `json:"error"`
-	Message string `json:"message"`
-	Data    any    `json:"data,omitempty"`
-	LogID   any    `json:"log_id,omitempty"`
+	Error   bool        `json:"error"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data,omitempty"`
+	LogID   interface{} `json:"log_id,omitempty"`
 }
 
 func (server *Server) Authenticate(ctx *gin.Context) {
@@ -64,7 +64,7 @@ func (server *Server) Authenticate(ctx *gin.Context) {
 	ctx.JSON(http.StatusAccepted, payload)
 }
 
-func (server *Server) logRequest(name, data string, ctx *gin.Context) (any, error) {
+func (server *Server) logRequest(name, data string, ctx *gin.Context) (interface{}, error) {
 	var entry struct {
 		Name string `json:"name"`
 		Data string `json:"data"`
@@ -74,6 +74,11 @@ func (server *Server) logRequest(name, data string, ctx *gin.Context) (any, erro
 	entry.Data = data
 
 	jsonData, err := json.MarshalIndent(entry, "", "\t")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return "", err
+	}
+
 	logServiceURL := "http://logger-service/log"
 
 	request, err := http.NewRequest("POST", logServiceURL, bytes.NewBuffer(jsonData))

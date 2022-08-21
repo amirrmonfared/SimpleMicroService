@@ -26,8 +26,8 @@ type Message struct {
 	To          string
 	Subject     string
 	Attachments []string
-	Data        any
-	DataMap     map[string]any
+	Data        interface{}
+	DataMap     map[string]interface{}
 }
 
 func (m *Mail) SendSMTPMessage(msg Message) error {
@@ -39,7 +39,7 @@ func (m *Mail) SendSMTPMessage(msg Message) error {
 		msg.FromName = m.FromName
 	}
 
-	data := map[string]any{
+	data := map[string]interface{}{
 		"message": msg.Data,
 	}
 

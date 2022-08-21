@@ -34,10 +34,10 @@ type MailPayload struct {
 }
 
 type jsonResponse struct {
-	Error   bool   `json:"error"`
-	Message string `json:"message"`
-	Data    any    `json:"data,omitempty"`
-	LogID   any    `json:"log_id,omitempty"`
+	Error   bool        `json:"error"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data,omitempty"`
+	LogID   interface{} `json:"log_id,omitempty"`
 }
 
 func (server *Server) Broker(ctx *gin.Context) {
