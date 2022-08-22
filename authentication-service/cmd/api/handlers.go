@@ -20,18 +20,20 @@ type jsonResponse struct {
 	LogID   interface{} `json:"log_id,omitempty"`
 }
 
-func (server *Server) Authenticate(ctx *gin.Context) {
-	var requestPayload struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
+type requestPayload struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
 
-	if err := ctx.ShouldBindJSON(&requestPayload); err != nil {
+func (server *Server) Authenticate(ctx *gin.Context) {
+	var req requestPayload
+
+	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
-	user, err := server.store.GetByEmail(ctx, requestPayload.Email)
+	user, err := server.store.GetByEmail(ctx, req.Email)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
@@ -42,7 +44,7 @@ func (server *Server) Authenticate(ctx *gin.Context) {
 		return
 	}
 
-	valid, err := PasswordMatches(requestPayload.Password, user)
+	valid, err := PasswordMatches(req.Password, user)
 	if err != nil || !valid {
 		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return

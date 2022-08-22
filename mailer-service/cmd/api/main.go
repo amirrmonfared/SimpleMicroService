@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-const webPort = ":8080"
+const webPort = ":80"
 
 func main() {
 	log.Println("starting mail service")

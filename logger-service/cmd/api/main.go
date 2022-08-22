@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	webPort  = ":8080"
+	webPort  = ":80"
 	mongoURL = "mongodb://mongo:27017"
 )
 
