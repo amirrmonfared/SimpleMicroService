@@ -11,7 +11,7 @@ import (
 )
 
 type Consumer struct {
-	conn *amqp.Connection
+	conn      *amqp.Connection
 	queueName string
 }
 
@@ -134,6 +134,6 @@ func logEvent(entry Payload) error {
 	if response.StatusCode != http.StatusAccepted {
 		return err
 	}
-	
+
 	return nil
 }

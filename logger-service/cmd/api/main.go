@@ -2,7 +2,10 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"net"
+	"net/rpc"
 	"time"
 
 	"github.com/amirrmonfared/SimpleMicroService/logger-service/data"
@@ -13,6 +16,8 @@ import (
 const (
 	webPort  = ":80"
 	mongoURL = "mongodb://mongo:27017"
+	rpcPort  = "5001"
+	gRpcPort = "50001"
 )
 
 var client *mongo.Client
@@ -46,9 +51,32 @@ func main() {
 		log.Println("cannot connect to server", err)
 	}
 
+	go server.rpcListen()
+	
+
+	// start web server
+	log.Println("Starting service on port", webPort)
 	err = server.Start(webPort)
 	if err != nil {
 		log.Fatal("cannot start server:", err)
+	}
+
+}
+
+func (server *Server) rpcListen() error {
+	log.Println("Starting RPC server on port ", rpcPort)
+	listen, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%s", rpcPort))
+	if err != nil {
+		return err
+	}
+	defer listen.Close()
+
+	for {
+		rpcConn, err := listen.Accept()
+		if err != nil {
+			continue
+		}
+		go rpc.ServeConn(rpcConn)
 	}
 
 }

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"net/rpc"
 
 	"github.com/amirrmonfared/SimpleMicroService/broker-service/event"
 	"github.com/gin-gonic/gin"
@@ -65,7 +66,7 @@ func (server *Server) HandleSubmission(ctx *gin.Context) {
 	case "auth":
 		server.authenticate(ctx, requestPayload.Auth)
 	case "log":
-		server.logEventViaRabbit(ctx, requestPayload.Log)
+		server.logItemViaRPC(ctx, requestPayload.Log)
 	case "getlog":
 		server.getLog(ctx, requestPayload.Log)
 	case "mail":
@@ -288,4 +289,36 @@ func (server *Server) pushToQueue(name, msg string) error {
 		return err
 	}
 	return nil
+}
+
+type RPCPayload struct {
+	Name string
+	Data string
+}
+
+func (server *Server) logItemViaRPC(ctx *gin.Context, l LogPayload) {
+	client, err := rpc.Dial("tcp", "logger-service:5001")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, err)
+		return
+	}
+
+	rpcPayload := RPCPayload{
+		Name: l.Name,
+		Data: l.Data,
+	}
+
+	var result string
+	err = client.Call("RPCServer.LogInfo", rpcPayload, &result)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, err)
+		return
+	}
+
+	payload := jsonResponse{
+		Error:   false,
+		Message: result,
+	}
+
+	ctx.JSON(http.StatusAccepted, payload)
 }
